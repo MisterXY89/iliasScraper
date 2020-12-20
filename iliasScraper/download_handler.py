@@ -23,7 +23,11 @@ class DownloadHandler:
 
         with open(file_loc, "rb") as file:
             info = fleep.get(file.read(256))
-        extension = info.extension[0]
+        if not info.extension:
+            # default extension
+            extension = "txt"
+        else:
+            extension = info.extension[0]
         if extension == "ai":
             extension = "pdf"
         elif extension == "pages":
