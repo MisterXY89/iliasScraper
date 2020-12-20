@@ -8,6 +8,9 @@ finding all folders features.
 This time I am not using scrapy but instead simply going for
 the old `request` and `bs4` or with headless selenium.
 
+*There is a fork of my old approach [mawenzy/iliasSpider](https://github.com/mawenzy/iliasSpider) which is actively maintained, if you prefer
+scrapy.*
+
 For password storing I'll be using the keyring package.
 
 **Currently only linux-systems are supported.**
