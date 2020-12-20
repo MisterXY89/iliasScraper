@@ -5,7 +5,7 @@ interface for user & comandline tool
 from colorama import Fore, Back, Style
 
 from .controller import Controller
-from .auth_manager import set_auth, store_pwd, read_pwd, reset_pwd
+from .auth_manager import set_auth, remove_pwd
 
 class Scraper:
     """
@@ -14,7 +14,7 @@ class Scraper:
 
     def __init__(self, url="", name=""):
         self.url = url
-        self.name = name
+        self.name = name.replace(" ", "_").lower()
 
     def setup(self, username=""):
         if not username or not "." in username:
@@ -30,5 +30,5 @@ class Scraper:
         self.controller.init_controller()
         self.controller.download(self.url, name=self.name)
 
-    def reset_password(self, username):
-        reset_pwd(username)
+    def remove_password(self, username):
+        remove_pwd(username)

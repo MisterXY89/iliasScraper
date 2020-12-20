@@ -29,7 +29,7 @@ def set_auth(username):
 		if should_store == "y":
 			store_pwd(PASSWORD, username)
 
-def reset_pwd(username):
+def remove_pwd(username):
 	keyring.delete_password(SCRAPER_NAME, username)
 
 def get_pwd():
