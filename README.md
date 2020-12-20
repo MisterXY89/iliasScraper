@@ -7,8 +7,6 @@ My initial approach can be found here: [MisterXY89/iliasSpider](https://github.c
 finding all folders features.
 This time I am not using scrapy but instead simply going for
 the old `request` and `bs4` or with headless selenium.
-It has two modes: the *package* and the *cli* mode. <br>
-More in the ## Usage section. Both modes download all files for the respective course in the current directory.
 
 For password storing I'll be using the keyring package.
 
@@ -19,11 +17,11 @@ For password storing I'll be using the keyring package.
 `pip3 install iliasScraper`
 or clone, cd into folder and `pip3 install .`.
 
-
 ## Usage
-
+There are two modes: the *package* and the *cli* mode. Both modes download all files for the respective course in the current directory.
 
 ### Package
+
 ```python
 from iliasScraper import scraper
 
