@@ -12,9 +12,11 @@ class Scraper:
     docstring for Scraper.
     """
 
-    def __init__(self, url="", name=""):
+    def __init__(self, url="", name="", target_dir="", ignore=[]):
         self.url = url
         self.name = name.replace(" ", "_").lower()
+        self.target_dir = target_dir
+        self.ignore = ignore
 
     def setup(self, username=""):
         if not username or not "." in username:
@@ -24,7 +26,7 @@ class Scraper:
         else:
             self.username = username
         set_auth(username)
-        self.controller = Controller(self.username)
+        self.controller = Controller(self.username, self.target_dir, self.ignore)
 
     def run(self):
         self.controller.init_controller()
