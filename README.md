@@ -95,4 +95,6 @@ requests
 fleep
 tqdm
 colorama
+keyring
+click
 ```
