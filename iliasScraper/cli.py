@@ -3,13 +3,15 @@ import os
 import sys
 import glob
 import click
+from pathlib import Path
 from colorama import Fore, Back, Style
 
 from .scraper import Scraper
 from .auth_manager import remove_pwd
 
 CONFIG_FILE = ".config"
-PATH = os.path.join(os.getenv("HOME"), ".iliasScraper")
+HOME = str(Path.home())
+PATH = os.path.join(HOME, ".iliasScraper")
 
 version_path = os.path.join(os.path.dirname(__file__),"VERSION")
 
@@ -29,18 +31,17 @@ def main():
 @click.option('--url', help='Ilias course url')
 @click.option('--username', help='Your Ilias username')
 @click.option('--course-name', help='The name of the course, will be used as the name of this scraper')
-
-def create(url, username, course_name):
+@click.option('--target-dir', help="The ABSOLUTE path for this course folder")
+# @click.option('--ignore', help="Files you want to ignore, seperated by ,")
+def create(url, username, course_name, target_dir):
     """
     Create a new scraper with a url and name
     """
-    # url = kwargs.get("url")
-    # course_name = kwargs.get("course_name")
-    # username = kwargs.get("username")
+    # ignore = ignore.split(",")
     scraper_source = f"""
 from iliasScraper import scraper
 user = '{username}'
-sc = scraper.Scraper(url='{url}', name='{course_name}')
+sc = scraper.Scraper(url='{url}', name='{course_name}', target_dir='{target_dir}')
 sc.setup(user)
 sc.run()"""
     course_name = course_name.replace(" ", "_")
@@ -54,7 +55,7 @@ sc.run()"""
 @click.option('--fallback-extension', required=False)
 def run(name, fallback_extension="txt"):
     """
-    Run a previously created scraper. Name can be specified with
+    Run a previously created scraper, name can be specified with
     and without the .py ending
     """
     scraper_file = f"{PATH}/{name}"

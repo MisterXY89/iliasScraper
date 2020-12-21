@@ -15,8 +15,10 @@ class Controller:
     The controller of the package - here comes everything together
     """
 
-    def __init__(self, username):
+    def __init__(self, username, target_dir, ignore):
         self.username = username
+        self.target_dir = target_dir
+        self.ignore_endings = ignore
         self.login_handler = LoginHandler(self.username)
         self.test_course_url = "https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_crs_1078392.html"
         self.test_file1 = "https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_file_1078407_download.html"
@@ -38,7 +40,7 @@ class Controller:
         self.session = self.login_handler.login()
         self.request_handler = RequestHandler(self.session)
         self.file_parser = FileParser(self.request_handler)
-        self.download_handler = DownloadHandler(self.request_handler)
+        self.download_handler = DownloadHandler(self.request_handler, self.target_dir)
 
     def download(self, url, name="course name"):
         print(Fore.BLUE + "\t\t ILIAS SCRAPER")
@@ -51,7 +53,7 @@ class Controller:
             print(Style.DIM + path)
             for file in files_for_path:
                 print(file["file_name"])
-                self.download_handler.download(file, path)
+                self.download_handler.download(file, path, self.ignore_endings)
 
     def test(self):
         self.download_handler.download({"url":self.test_file2, "file_name":"testfile"}, "")
