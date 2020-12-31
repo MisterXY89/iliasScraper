@@ -28,8 +28,7 @@ class Controller:
         file_dict = {}
         print(">> Getting all folder urls...")
         all_urls = self.file_parser.get_all_urls(url)#.append(url)
-        all_urls.append(url)
-        print(all_urls)
+        all_urls.append(url)        
         print(Style.RESET_ALL)
         for link in all_urls:
             soup = self.request_handler.get_soup(link)

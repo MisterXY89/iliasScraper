@@ -44,9 +44,7 @@ class FileParser:
 
     def _extract_symbol_name(self, a_tag):
         imgs = a_tag.find_all("img")
-        if imgs:
-            print(imgs[0])
-            print(imgs[0]["title"])
+        if imgs:            
             return str(imgs[0]["title"].lower())
         return ""
 
@@ -57,7 +55,6 @@ class FileParser:
         for img in img_list:
             img_title = img["title"].lower()
             if self.file_id in img_title:
-                # todo: split current path and thus create real sub dicts
                 if not path in dir_dict:
                     dir_dict[path] = []
                 dir_dict[path].append({
@@ -67,31 +64,22 @@ class FileParser:
         return dir_dict
 
     def _is_sitzung(self, tag):
-        print("#Sitzung-check")
         if isinstance(tag, str):
-            print("TAG IS STRING")
-            print(tag)
             return False
-        print(tag)
         img = tag.parent.parent.parent.parent.parent.find_all("img", class_="ilListItemIcon")
-        print(img)
         if img:
             img = img[0]
             title = img["title"].lower()
             if "sitzung" in title or "session" in title:
-                return (True, title)
-        return (False, "")
+                return True
+        return False
 
     def get_all_urls(self, url):
-        print(40*"~")
         soup = self.request_handler.get_soup(url)
         if self.layer == 0:
             self.base_soup = soup
         links = soup.find_all('a', class_="il_ContainerItemTitle")
-        # print(links)
-        # raise Exception("ERR")
         if not links or url in self.all_urls:
-            # self.all_urls.append(url)
             return 1
         else:
             for link in links:
@@ -101,11 +89,11 @@ class FileParser:
                 if not "https" in href:
                     href = f"https://ilias.uni-konstanz.de/ilias/{href}"
 
-                res = self._is_sitzung(link)
-                sitz = res[0]
-                title = res[1]
-                print(f"{sitz=}")
-                print(f"{title=}")
+                # res = self._is_sitzung(link)
+                # sitz = res[0]
+                # title = res[1]
+                # print(f"{sitz=}")
+                # print(f"{title=}")
                 added = False
                 if "fold" in href:
                     self.all_urls.append(url)
