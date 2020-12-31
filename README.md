@@ -1,5 +1,8 @@
 # iliasScraper: revised
 
+**Package is still in development, so make sure you have the latest version installed or update via:** <br>
+`pip install iliasScraper --upgrade`
+
 iliasScraper is as the name already states, a web scraper which downloads your
 materials from any Ilias course. Designed for the university Constance and written in python. <br>
 **The folder structure from the Ilias course is kept!** <br>
@@ -10,7 +13,7 @@ now supports:
   - specicy a target dir
   - CLI and package mode
   - file extension detection
-  - sessions/sitzungen are now supported 
+  - sessions/sitzungen are now supported
 
 This package uses the old `request` and `bs4`, instead of `scrapy`.
 
