@@ -44,7 +44,7 @@ class FileParser:
 
     def _extract_symbol_name(self, a_tag):
         imgs = a_tag.find_all("img")
-        if imgs:            
+        if imgs:
             return str(imgs[0]["title"].lower())
         return ""
 
@@ -83,7 +83,7 @@ class FileParser:
             return 1
         else:
             for link in links:
-                if not link.has_attr("href"):
+                if not link.has_attr("href") or not link in self.all_urls:
                     continue
                 href = link['href']
                 if not "https" in href:
