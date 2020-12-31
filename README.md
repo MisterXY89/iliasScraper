@@ -9,7 +9,8 @@ now supports:
   - recursively finding all folders, not only custom specified ones
   - specicy a target dir
   - CLI and package mode
-  - file extension detection  
+  - file extension detection
+  - sessions/sitzungen are now supported 
 
 This package uses the old `request` and `bs4`, instead of `scrapy`.
 
