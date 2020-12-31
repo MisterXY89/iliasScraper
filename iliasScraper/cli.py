@@ -28,10 +28,10 @@ def main():
 
 
 @main.command()
-@click.option('--url', help='Ilias course url')
-@click.option('--username', help='Your Ilias username')
-@click.option('--course-name', help='The name of the course, will be used as the name of this scraper')
-@click.option('--target-dir', help="The ABSOLUTE path for this course folder")
+@click.option('--url', help='Ilias course url', required=True)
+@click.option('--username', help='Your Ilias username', required=True)
+@click.option('--course-name', help='The name of the course, will be used as the name of this scraper', required=True)
+@click.option('--target-dir', help="The ABSOLUTE path for this course folder", required=False)
 # @click.option('--ignore', help="Files you want to ignore, seperated by ,")
 def create(url, username, course_name, target_dir):
     """
@@ -44,6 +44,9 @@ user = '{username}'
 sc = scraper.Scraper(url='{url}', name='{course_name}', target_dir='{target_dir}')
 sc.setup(user)
 sc.run()"""
+    if course_name == None:
+        print("please use ")
+        return 0
     course_name = course_name.replace(" ", "_")
     with open(f"{PATH}/{course_name}.py", "w") as scraper_file:
         scraper_file.write(scraper_source)
