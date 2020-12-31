@@ -29,10 +29,11 @@ class Controller:
         print(">> Getting all folder urls...")
         all_urls = self.file_parser.get_all_urls(url)#.append(url)
         all_urls.append(url)
+        print(all_urls)
         print(Style.RESET_ALL)
         for link in all_urls:
             soup = self.request_handler.get_soup(link)
-            file_dict_for_link = self.file_parser.parse(soup, url=self.test_course_url)
+            file_dict_for_link = self.file_parser.parse(soup)
             file_dict.update(file_dict_for_link)
         return file_dict
 
