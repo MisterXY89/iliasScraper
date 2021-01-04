@@ -28,10 +28,10 @@ def main():
 
 
 @main.command()
-@click.option('--url', help='Ilias course url', required=True)
-@click.option('--username', help='Your Ilias username', required=True)
-@click.option('--course-name', help='The name of the course, will be used as the name of this scraper', required=True)
-@click.option('--target-dir', help="The ABSOLUTE path for this course folder", required=False)
+@click.option("-u", '--url', help='Ilias course url', required=True)
+@click.option("-n", '--username', help='Your Ilias username', required=True)
+@click.option("-c", '--course-name', help='The name of the course, will be used as the name of this scraper', required=True)
+@click.option("-d", '--target-dir', help="The ABSOLUTE path for this course folder", required=False)
 # @click.option('--ignore', help="Files you want to ignore, seperated by ,")
 def create(url, username, course_name, target_dir):
     """
@@ -54,8 +54,8 @@ sc.run()"""
 
 
 @main.command()
-@click.option('--name', help='Name of the scraper', required=True)
-@click.option('--fallback-extension', required=False)
+@click.option("-n", '--name', help='Name of the scraper', required=True)
+@click.option("-e", '--fallback-extension', required=False)
 def run(name, fallback_extension="txt"):
     """
     Run a previously created scraper, name can be specified with
