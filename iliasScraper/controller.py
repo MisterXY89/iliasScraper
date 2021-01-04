@@ -42,7 +42,7 @@ class Controller:
 
     def collect(self, url):
         file_dict = {}
-        print(">> Getting all folder urls...")
+        print(">> Getting all folder and session urls...")
         all_urls = self.file_parser.get_all_urls(url)#.append(url)
         all_urls.append(url)
         print(Style.RESET_ALL)
