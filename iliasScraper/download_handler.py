@@ -11,6 +11,8 @@ class DownloadHandler:
     def __init__(self, request_handler, target_dir):
         self.request_handler = request_handler
         self.target_dir = target_dir
+        # if not self.target_dir:
+        #     self.target_dir = self.PATH_DELIMITER
         if platform.system() == "windows":
             self.PATH_DELIMITER = "\\"
         else:
@@ -32,10 +34,14 @@ class DownloadHandler:
         return extension
 
     def download(self, file_dict, file_path, ignore_endings):
+        # print(f"download <{file_dict=}>, <{file_path=}>")
         path = ""
-        if not self.target_dir[:-1] == self.PATH_DELIMITER:
+        # print(f"{self.target_dir=}")
+        if self.target_dir[-1:] != self.PATH_DELIMITER:
+            # print(self.target_dir[:-1])
             self.target_dir += self.PATH_DELIMITER
 
+        # print(f"{self.target_dir=}")
         # relative path in script execution dir
         if self.target_dir == self.PATH_DELIMITER:
             path += os.getcwd()

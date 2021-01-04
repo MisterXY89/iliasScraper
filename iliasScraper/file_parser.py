@@ -23,7 +23,6 @@ class FileParser:
         self.all_urls = []
         self.base_soup = None
 
-
     def filter_ignored(self, img_list):
         def filter_(title):
             return any(map(lambda el: el in title.lower(), self.ignore))
@@ -63,9 +62,14 @@ class FileParser:
                         })
         return dir_dict
 
-    def _is_sitzung(self, tag):
-        if isinstance(tag, str):
+    def _is_sitzung(self, tag, soup, add_q=False):
+        if add_q:
+            sitzungen = soup.find_all("img", title="Symbol Sitzung")
+            sitzungen_no = len(sitzungen)
+            if sitzungen_no == 1:
+                return True
             return False
+
         img = tag.parent.parent.parent.parent.parent.find_all("img", class_="ilListItemIcon")
         if img:
             img = img[0]
@@ -75,35 +79,29 @@ class FileParser:
         return False
 
     def get_all_urls(self, url):
+        # print(40*"~")
+        # print(f"{url=}")
         soup = self.request_handler.get_soup(url)
-        if self.layer == 0:
-            self.base_soup = soup
         links = soup.find_all('a', class_="il_ContainerItemTitle")
         if not links or url in self.all_urls:
+            self.all_urls.append(url)
             return 1
         else:
+            sitzung_q = self._is_sitzung(url, soup=soup, add_q=True)
+            # print(f"{sitzung_q=}")
+            if "fold" in url or sitzung_q:
+                self.all_urls.append(url)
+                print(Style.DIM + url + Style.RESET_ALL)
             for link in links:
-                if not link.has_attr("href") or not link in self.all_urls:
+                if not link.has_attr("href") or link in self.all_urls:
                     continue
                 href = link['href']
                 if not "https" in href:
                     href = f"https://ilias.uni-konstanz.de/ilias/{href}"
 
-                # res = self._is_sitzung(link)
-                # sitz = res[0]
-                # title = res[1]
-                # print(f"{sitz=}")
-                # print(f"{title=}")
-                added = False
-                if "fold" in href:
-                    self.all_urls.append(url)
-                    added = True
-                if self._is_sitzung(link):
-                    self.all_urls.append(href)
-                    added = True
-                if added:
-                    print(Style.DIM + url + Style.RESET_ALL)
+                if "fold" in href or self._is_sitzung(link, soup=soup):
                     self.get_all_urls(href)
+
         return list(set(self.all_urls))
 
     def extract_path_from_breadcrumb(self, breadcrumb_string):
@@ -113,14 +111,12 @@ class FileParser:
         return path_list
 
     def parse(self, soup):
-
         breadcrumb_string = soup.find_all("ol", class_="breadcrumb")
         if not breadcrumb_string:
             return {}
         breadcrumb_string = breadcrumb_string[0].text
         path = "/".join(list(map(lambda x: self._pathify_folder_name(x),
                         self.extract_path_from_breadcrumb(breadcrumb_string))))
-
 
         all_img_tags = soup.find_all("img", class_="ilListItemIcon")
         f_img_tags = self.filter_ignored(all_img_tags)
