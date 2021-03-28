@@ -39,7 +39,11 @@ def create(url, username, course_name, target_dir):
     """
     # ignore = ignore.split(",")
     scraper_source = f"""
+import sys
 from iliasScraper import scraper
+if len(sys.argv) == 2:
+    skip = sys.argv[1]
+
 user = '{username}'
 sc = scraper.Scraper(url='{url}', name='{course_name}', target_dir='{target_dir}')
 sc.setup(user)
@@ -55,8 +59,9 @@ sc.run()"""
 
 @main.command()
 @click.option("-n", '--name', help='Name of the scraper', required=True)
+@click.option("-s", '--skip', help='Skip existing files, default=True', required=False)
 @click.option("-e", '--fallback-extension', required=False)
-def run(name, fallback_extension="txt"):
+def run(name, skip=True, fallback_extension="txt"):
     """
     Run a previously created scraper, name can be specified with
     and without the .py ending
@@ -68,7 +73,7 @@ def run(name, fallback_extension="txt"):
         print(Fore.RED + "The specified name does not match any configured scrapers.")
         print("Use <<iliasScraper list>> to list all current scrapers.")
         return 0
-    os.system(f"python3 {scraper_file}")
+    os.system(f"python3 {scraper_file} {skip}")
 
 @main.command()
 def list(**kwargs):

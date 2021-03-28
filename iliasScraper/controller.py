@@ -1,8 +1,10 @@
 
 import os
+import glob
 from tqdm import tqdm
 from colorama import Fore, Back, Style
 
+from .config import PATH_DELIMITER
 from .login_handler import LoginHandler
 from .file_parser import FileParser
 from .request_handler import RequestHandler
@@ -14,13 +16,23 @@ class Controller:
     The controller of the package - here comes everything together
     """
 
-    def __init__(self, username, target_dir, ignore):
+    def __init__(self, username, target_dir="/", skip_existing_files=True, ignore=[]):
         self.request_handler = RequestHandler()
-        self._check_version()
         self.username = username
         self.target_dir = target_dir
         self.ignore_endings = ignore
+        self._check_version()
+        self.skip_existing_files = skip_existing_files
+        if self.skip_existing_files:
+            print("getting files")
+            self.existing_files = self.get_existing_files()
+        else:
+            self.existing_files = []
+        print(self.existing_files)
+
+
         self.login_handler = LoginHandler(self.username)
+
         self.test_course_url = "https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_crs_1078392.html"
         self.test_file1 = "https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_file_1078407_download.html"
         self.test_file2 = "https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_file_1091580_download.html"
@@ -40,6 +52,17 @@ class Controller:
             + "pip install iliasScraper --upgrade" + Style.RESET_ALL \
             + "\n"+(50*"-")+"\n")
 
+    def get_existing_files(self):
+        # existing_files = []
+        directory = self.target_dir
+        if directory == PATH_DELIMITER:
+            directory = os.getcwd()
+
+        # filename.split(PATH_DELIMITER)[-1]
+        existing_files = [os.path.join(dp, f) for dp, dn, filenames in os.walk(directory) for f in filenames]
+        return existing_files
+
+
     def collect(self, url):
         file_dict = {}
         print(">> Getting all folder and session urls...")
@@ -55,7 +78,7 @@ class Controller:
     def init_controller(self):
         self.session = self.login_handler.login()
         self.request_handler.init_session(self.session)
-        self.file_parser = FileParser(self.request_handler)
+        self.file_parser = FileParser(self.request_handler, self.skip_existing_files, self.existing_files)
         self.download_handler = DownloadHandler(self.request_handler, self.target_dir)
 
     def download(self, url, name="course name"):

@@ -8,7 +8,7 @@ class FileParser:
     docstring for FileParser.
     """
 
-    def __init__(self, request_handler):
+    def __init__(self, request_handler, skip_existing_files=True, existing_files=[]):
         self.parser = 'html.parser'
         self.ignore = ["weblink", "test", "forum", "übung", "inhaltsseite"]
         self.file_id = "datei"
@@ -21,7 +21,9 @@ class FileParser:
         self.layer = 0
         self.request_handler = request_handler
         self.all_urls = []
-        self.base_soup = None
+        self.skip_existing_files = skip_existing_files
+        self.existing_files = existing_files
+
 
     def filter_ignored(self, img_list):
         def filter_(title):
@@ -29,17 +31,21 @@ class FileParser:
         return [tag for tag in img_list if not filter_(tag["title"])]
 
     def _extract_href(self, img):
-        return img.parent["href"]
+        element = list(img.parent.parent.find_all("a"))[0]
+        return element["href"]
 
     def _pathify_folder_name(self, folder_name):
         folder_name = "_".join(folder_name.split(" "))
         folder_name = "_".join(folder_name.split("|"))
         folder_name = "_".join(folder_name.split("'"))
+        folder_name = "_".join(folder_name.split(":"))
         folder_name = re.sub("_+", "_", folder_name)
         return folder_name
 
     def _extract_file_name(self, img):
-        return img.parent.parent.parent.find_all("a")[1].text
+        # why was index = 1 ????
+        element = list(img.parent.parent.parent.find_all("a"))[0]
+        return element.text
 
     def _extract_symbol_name(self, a_tag):
         imgs = a_tag.find_all("img")
@@ -53,12 +59,18 @@ class FileParser:
         dir_dict = {}
         for img in img_list:
             img_title = img["title"].lower()
+            # print(f"{img_title=}")
             if self.file_id in img_title:
                 if not path in dir_dict:
                     dir_dict[path] = []
+                filename = self._extract_file_name(img)
+                # print(f"{filename=}")
+                if self.skip_existing_files and filename in self.existing_files:
+                    print("continue")
+                    continue
                 dir_dict[path].append({
                         "url": self._extract_href(img),
-                        "file_name": self._extract_file_name(img)
+                        "file_name": filename
                         })
         return dir_dict
 
@@ -117,6 +129,10 @@ class FileParser:
         breadcrumb_string = breadcrumb_string[0].text
         path = "/".join(list(map(lambda x: self._pathify_folder_name(x),
                         self.extract_path_from_breadcrumb(breadcrumb_string))))
+
+        # ilContainerListItemOuter
+        # - ilContainerListItemIcon
+        # - ilContainerListItemContent
 
         all_img_tags = soup.find_all("img", class_="ilListItemIcon")
         f_img_tags = self.filter_ignored(all_img_tags)

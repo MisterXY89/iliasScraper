@@ -1,7 +1,8 @@
 
 import os
 import fleep
-import platform
+
+from .config import PATH_DELIMITER
 
 class DownloadHandler:
     """
@@ -11,13 +12,6 @@ class DownloadHandler:
     def __init__(self, request_handler, target_dir):
         self.request_handler = request_handler
         self.target_dir = target_dir
-        # if not self.target_dir:
-        #     self.target_dir = self.PATH_DELIMITER
-        if platform.system() == "windows":
-            self.PATH_DELIMITER = "\\"
-        else:
-            self.PATH_DELIMITER = "/"
-
 
     def _determine_extension(self, file_loc):
         with open(file_loc, "rb") as file:
@@ -36,14 +30,14 @@ class DownloadHandler:
     def download(self, file_dict, file_path, ignore_endings):
         # print(f"download <{file_dict=}>, <{file_path=}>")
         path = ""
-        # print(f"{self.target_dir=}")
-        if self.target_dir[-1:] != self.PATH_DELIMITER:
+        print(f"{self.target_dir=}")
+        if self.target_dir[-1] != PATH_DELIMITER:
             # print(self.target_dir[:-1])
-            self.target_dir += self.PATH_DELIMITER
+            self.target_dir += PATH_DELIMITER
 
         # print(f"{self.target_dir=}")
         # relative path in script execution dir
-        if self.target_dir == self.PATH_DELIMITER:
+        if self.target_dir == PATH_DELIMITER:
             path += os.getcwd()
 
         # else: an absolute path has been set and will be used
@@ -54,9 +48,10 @@ class DownloadHandler:
         url = file_dict["url"]
         file_name = file_dict["file_name"]
         file = self.request_handler.get_file(url)
-        file_loc = path+self.PATH_DELIMITER+file_name
+        file_loc = path+PATH_DELIMITER+file_name
         # save file without file-ending
-        open(file_loc, "wb").write(file.content)
+        with open(file_loc, "wb") as file_we:
+            file_we.write(file.content)
         # set file-ending
         extension = self._determine_extension(file_loc)
         # if extension in ignore_endings:
@@ -64,9 +59,9 @@ class DownloadHandler:
         os.rename(r""+file_loc,r""+file_loc+"."+extension)
 
     def _verify_path(self, path):
-        folder_list = path.split(self.PATH_DELIMITER)
+        folder_list = path.split(PATH_DELIMITER)
         for i in range(0, len(folder_list)):
-            sub_path = self.PATH_DELIMITER+self.PATH_DELIMITER.join(folder_list[1:i+3])
+            sub_path = PATH_DELIMITER+PATH_DELIMITER.join(folder_list[1:i+3])
             if not os.path.exists(sub_path):
                 # todo check windows
                 original_umask = os.umask(000)
