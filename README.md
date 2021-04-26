@@ -29,8 +29,12 @@ For password storing I'll be using the `keyring` package.
 `pip3 install iliasScraper`
 or clone, cd into folder and `pip3 install .`.
 
+### MacOS
+To get it working on a mac you need `Python 3.9.4`,
+
 ## Usage
 There are two modes: the *package* and the *cli* mode. Both modes download all files for the respective course in the current directory.
+
 
 ### Package
 
@@ -86,12 +90,24 @@ Commands:
   remove-password  Remove the stored password
   run              Run a previously created scraper
 ```
-**Example usage:**
+#### Example usage
+
+##### Mac
+
+For Macs the creation is a little different:
+
+```bash
+# the url needs to be put in quotes
+iliasScraper create --url "https://ilias.uni-konstanz.de/ilias/goto.php?target=crs_1186878" --username tilman.kerl --course-name "Vertragsrecht" --target-dir "/Users/tilman/Desktop/UNI/Jura"
+```
+
+##### Linux
+
 ```bash
 # create a new scraper like this, the name will be changed to "bsc_seminar"
 # the scraper will be stored in ~/.iliasScraper/
 # the target_dir has to be an ABSOLUTE PATH!
-$ iliasScraper create --url https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_crs_1078392.html --username tilman.kerl --course-name "bsc seminar" --target_dir /home/dragonfly/Documents/Uni/WS201
+$ iliasScraper create --url https://ilias.uni-konstanz.de/ilias/goto_ilias_uni_crs_1078392.html --username tilman.kerl --course-name "bsc seminar" --target-dir /home/dragonfly/Documents/Uni/WS201
 > Scraper 'bsc_seminar' has been created!
 # you can now run the scraper via
 $ iliasScraper run --name bsc_seminar
